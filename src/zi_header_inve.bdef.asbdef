@@ -1,0 +1,62 @@
+managed implementation in class zbp_i_header_inve unique;
+strict ( 2 );
+
+define behavior for ZI_HEADER_INVE alias Header // <--- Le pusimos nombre 'Header'
+persistent table zheader_inve
+lock master
+authorization master ( instance )
+{
+  create ( authorization : global );
+  update;
+  delete;
+
+  // Habilitamos la creación de items hijos
+  association _Schedule { create; }
+
+  // 1. MAGIA: Generación automática de UUID
+  field ( numbering : managed, readonly ) InvestId;
+
+  // 2. Campos que el usuario NO toca
+  field ( readonly ) CreatedBy, CreatedAt, Status;
+
+  // 3. TRADUCTOR: CDS (CamelCase) = Tabla (snake_case)
+  mapping for zheader_inve
+  {
+    InvestId = invest_id;
+    AssetType = asset_type;
+    Description = description;
+    NominalAmount = nominal_amount;
+    CurrencyCode = currency_code;
+    TotalBuyPrice = total_buy_price;
+    LocalTaxBasis = local_tax_basis;
+    Status = status;
+    CreatedBy = created_by;
+    CreatedAt = created_at;
+  }
+}
+
+define behavior for ZI_BONO_SCHEDULE alias Schedule // <--- Le pusimos nombre 'Schedule'
+persistent table zbono_schedule
+lock dependent by _Header
+authorization dependent by _Header
+{
+  update;
+  delete;
+
+  // El hijo no se puede mover de padre, así que el ID del padre es solo lectura
+  field ( readonly ) InvestId, ScheduleItem;
+  association _Header;
+
+  mapping for zbono_schedule
+  {
+  InvestId = invest_id;
+  ScheduleItem = schedule_item;
+  PaymentDate = payment_date;
+  CurrencyCode = currency_code;
+  NominalAmort = nominal_amort;
+  InterestAmount = interest_amount;
+  AppliedRate = applied_rate;
+  CerAdjustment = cer_adjustment;
+  PaymentReceived = payment_received;
+  }
+}
