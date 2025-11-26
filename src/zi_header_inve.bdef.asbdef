@@ -1,25 +1,28 @@
 managed implementation in class zbp_i_header_inve unique;
 strict ( 2 );
+with draft;
 
-define behavior for ZI_HEADER_INVE alias Header // <--- Le pusimos nombre 'Header'
+define behavior for ZI_HEADER_INVE alias Header
 persistent table zheader_inve
+draft table zheader_inve_d
 lock master
+total etag CreatedAt
 authorization master ( instance )
 {
   create ( authorization : global );
   update;
   delete;
+  draft action Edit;
+  draft action Activate optimized;
+  draft action Discard;
+  draft action Resume;
+  draft determine action Prepare;
 
-  // Habilitamos la creación de items hijos
-  association _Schedule { create; }
+  association _Schedule { create; with draft; }
 
-  // 1. MAGIA: Generación automática de UUID
   field ( numbering : managed, readonly ) InvestId;
-
-  // 2. Campos que el usuario NO toca
   field ( readonly ) CreatedBy, CreatedAt, Status;
 
-  // 3. TRADUCTOR: CDS (CamelCase) = Tabla (snake_case)
   mapping for zheader_inve
   {
     InvestId = invest_id;
@@ -35,28 +38,29 @@ authorization master ( instance )
   }
 }
 
-define behavior for ZI_BONO_SCHEDULE alias Schedule // <--- Le pusimos nombre 'Schedule'
+define behavior for ZI_BONO_SCHEDULE alias Schedule
 persistent table zbono_schedule
+draft table zbono_sched_d
 lock dependent by _Header
 authorization dependent by _Header
 {
   update;
   delete;
 
-  // El hijo no se puede mover de padre, así que el ID del padre es solo lectura
   field ( readonly ) InvestId, ScheduleItem;
-  association _Header;
+
+  association _Header { with draft; }
 
   mapping for zbono_schedule
   {
-  InvestId = invest_id;
-  ScheduleItem = schedule_item;
-  PaymentDate = payment_date;
-  CurrencyCode = currency_code;
-  NominalAmort = nominal_amort;
-  InterestAmount = interest_amount;
-  AppliedRate = applied_rate;
-  CerAdjustment = cer_adjustment;
-  PaymentReceived = payment_received;
+    InvestId = invest_id;
+    ScheduleItem = schedule_item;
+    PaymentDate = payment_date;
+    CurrencyCode = currency_code;
+    NominalAmort = nominal_amort;
+    InterestAmount = interest_amount;
+    AppliedRate = applied_rate;
+    CerAdjustment = cer_adjustment;
+    PaymentReceived = payment_received;
   }
 }

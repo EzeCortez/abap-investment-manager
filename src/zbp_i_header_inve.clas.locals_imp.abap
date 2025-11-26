@@ -14,6 +14,9 @@ CLASS lhc_Header IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_global_authorizations.
+    IF requested_authorizations-%create EQ if_abap_behv=>mk-on.
+      result-%create = if_abap_behv=>auth-allowed.
+    ENDIF.
   ENDMETHOD.
 
 ENDCLASS.

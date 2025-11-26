@@ -1,0 +1,5 @@
+@EndUserText.label: 'Vista Interface Inversiones.'
+define service ZUI_HEADER_INVE {
+  expose ZC_HEADER_INVE   as Inversion;
+  expose ZC_BONO_SCHEDULE as Cronograma;
+}

@@ -5,7 +5,6 @@ CLASS zcl_fin_math DEFINITION
 
   PUBLIC SECTION.
 
-    " 1. Definición de Tipos (Estructuras de Datos)
     TYPES:
       BEGIN OF ts_schedule,
         payment_date     TYPE zbono_schedule-payment_date,
@@ -17,7 +16,6 @@ CLASS zcl_fin_math DEFINITION
       ty_roi TYPE p LENGTH 8 DECIMALS 2,
       tt_schedule TYPE STANDARD TABLE OF ts_schedule WITH EMPTY KEY.
 
-     " 2. Definición de Métodos
     CLASS-METHODS calculate_roi
       IMPORTING
         iv_asset_type TYPE zheader_inve-asset_type
