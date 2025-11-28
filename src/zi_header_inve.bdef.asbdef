@@ -17,7 +17,7 @@ authorization master ( instance )
   draft action Discard;
   draft action Resume;
   draft determine action Prepare;
-
+  determination CalculateFinancials on save { field NominalAmount, TotalBuyPrice; }
   association _Schedule { create; with draft; }
 
   field ( numbering : managed, readonly ) InvestId;
